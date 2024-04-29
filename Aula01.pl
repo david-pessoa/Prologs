@@ -31,6 +31,13 @@ divide([], [], []).
 divide([A], [B], []).
 divide([A, B|X], [A|As], [B|Bs]) :- divide(X, As, Bs).
 
+divide2(L, R1, R2) :- divide2(L, [], [], R1, R2).
+divide2([], R1, R2, R1, R2).
+divide2([A], L1, R2, [A|L1], R2).
+divide2([A, B|X], L1, L2, R1, R2) :- divide2(Z, [A|L1], [B|L2], R1, R2).
+
+
+
 
 
 

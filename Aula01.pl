@@ -17,9 +17,29 @@ inter([A|X], L, [A|Z]) :- membro(A, L), inter(X, L, Z).
 inter([A|X], L, Z) :- inter().
 
 /****************************************************/ /*
-deleta primeira ocorrência */
-
+deleta primeira ocorrência
 delpri(5, [3, 5, 2, 1, 5, 5, 6], R).
 R = [3, 2, 1, 5, 5, 6]
+*/
+delpri(Elem, [], []).
+delpri(Elem, [Elem|X]], X).
+delpri(Elem, [A|X], [A|Z]) :- delpri(Elem, X, Z). 
+
+/****************************************************/ /*
+divide lista */
+divide([], [], []).
+divide([A], [B], []).
+divide([A, B|X], [A|As], [B|Bs]) :- divide(X, As, Bs).
+
+
+
+
+
+
+
+
+
+
+
 
 

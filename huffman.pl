@@ -1,6 +1,5 @@
 /* 1) descobrir como transferir o conteúdo de um arquivo para uma string em prolog
    2) descobrir como transferir o conteúdo codificado produzido para o arquivo out.txt
-
 */
 
 huffman :-

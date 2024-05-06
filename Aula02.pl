@@ -10,6 +10,14 @@ npri(N, [A|As], [A|X], Resto) :- N2 is N - 1, npri(N2, As, X, Resto).
 tam([], 0).
 tam([A|As], N) :- tam(As, N2), N is N2 + 1.
 
-%------------------------------------MERGE SORT -----------------------------------
+%------------------------------------ MERGE SORT ----------------------------------
 intercala([], L, L).
 intercala(L, [], L).
+intercala([A|As], [B|Bs], [A|X]) :- A =< B, intercala(As, [B|Bs], X).
+intercala([A|As], [B|Bs], [B|X]) :- intercala([A|As], Bs, X).
+
+mergeSort(A, L) :-
+    split(A, X, Y).
+    mergeSort(X, Xs).
+    mergeSort(Y, Ys).
+    intercala(Xs, Ys, L).

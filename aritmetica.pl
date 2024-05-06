@@ -29,7 +29,7 @@ situacao(Aluno, Situacao) :- nota(Aluno, X),
                               (X > 7.0, X =< 10, Situacao = "Aprovado");
                               (X >= 5.0, X =< 6.9, Situacao = "Recuperação");
                               (X < 5.0, Situacao = "Reprovado")
-                             ). 
+                             ).
 
 fatorial(0, 1).
 fatorial(N, F) :- N > 0, 

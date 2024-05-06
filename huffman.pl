@@ -2,6 +2,8 @@
    2) descobrir como transferir o conteúdo codificado produzido para o arquivo out.txt
 */
 
+:- use_module(library(pairs)).
+
 huffman :-
     %ler mensagem do in.txt
 	L = 'this is an example for huffman encoding',
@@ -12,11 +14,13 @@ huffman :-
 	build_tree(PLS, A),
 	coding(A, [], C),
 	sort(C, SC),
-	format('Symbol~t   Weight~t~30|Code~n'),
-    write(SC),
-    % LA e SC para transferir para substituir
-    % exportar string de resposta para out.txt
-	maplist(print_code, SC).
+	
+	% Substituir caracteres pelos códigos binários correspondentes
+    substituir_caracteres(LA, SC, MensagemCodificada),
+
+	write(MensagemCodificada). 
+
+	%escrever_mensagem_codificada("out.txt", MensagemCodificada).
 
 build_tree([[V1|R1], [V2|R2]|T], AF) :- 
 	V is V1 + V2, 
@@ -41,8 +45,6 @@ print_code([N, Car, Code]):-
 	forall(member(V, Code), write(V)),
 	nl.
 
-    
-
 packList([], []).
 packList([X], [[1,X]]) :- !.
 packList([X|Rest], [XRun|Packed]):-
@@ -55,3 +57,33 @@ run(V, [V|LRest], [N1,V], RRest):-
     N1 is N + 1.
 run(V, [Other|RRest], [1,V], [Other|RRest]):-
     dif(V, Other).
+
+substituir_caracteres([], _, []).
+substituir_caracteres([Caractere|MensagemRestante], Codificacao, MensagemCodificadaRestante) :-
+    (   member([_, Caractere, CodigoBinario | X], Codificacao) ->
+		lista_inteiros_para_string(CodigoBinario, Code_str),
+        MensagemCodificadaRestante = [Code_str|MensagemCodificadaRestanteRestante]
+    ),
+    substituir_caracteres(MensagemRestante, Codificacao, MensagemCodificadaRestanteRestante).
+
+
+escrever_mensagem_codificada(Arquivo, MensagemCodificada) :-
+    open(Arquivo, write, Stream),
+    maplist(escrever_codigo(Stream), MensagemCodificada),
+    close(Stream).
+
+escrever_codigo(Stream, CodigoBinario) :-
+	%writeln(CodigoBinario),
+    maplist(write(Stream), CodigoBinario).
+
+lista_inteiros_para_string([], '').
+lista_inteiros_para_string([Inteiro|Resto], String) :-
+    convert(Caractere, Inteiro),
+    lista_inteiros_para_string(Resto, RestoString),
+    string_chars(RestoString, RestoChars),
+    string_chars(String, [Caractere|RestoChars]).
+
+convert('0', 0).
+convert('1', 1).
+
+

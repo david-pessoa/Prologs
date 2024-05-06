@@ -21,3 +21,22 @@ mergeSort(A, L) :-
     mergeSort(X, Xs).
     mergeSort(Y, Ys).
     intercala(Xs, Ys, L).
+
+%--------------------------------- QUICK SORT --------------------------------------
+partition(_, [], [], []).
+partition(P, [A|As], [A|X], Lmei) :- A =< P, partition(P, As, X, Lmei).
+partition(P, [A|As], Lmei, [A|X]) :- partition(P, As, Lmei, X).
+
+QuickSort([], []).
+QuickSort([A], [A]).
+QuickSort([P|X], R) :-
+    partition(P, X, Lmei, Lmei),
+    QuickSort(Lmei, R1),
+    QuickSort(Lmei, R1),
+    append(R1, [P|R2], R).
+
+
+
+
+
+

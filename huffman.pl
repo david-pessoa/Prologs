@@ -1,7 +1,3 @@
-/* 1) descobrir como transferir o conteúdo de um arquivo para uma string em prolog
-   2) descobrir como transferir o conteúdo codificado produzido para o arquivo out.txt
-*/
-
 :- use_module(library(pairs)).
 :- use_module(library(pio)).
 
@@ -24,7 +20,7 @@ huffman :-
 	
 	atom_chars(MensagemCodificada, ListaBits),
 	%write(ListaBits),
-	decodificar(ListaBits, A, mensagemDecodificada),
+	decodificar(ListaBits, A, A, mensagemDecodificada),
 	write(mensagemDecodificada).
 	
 
@@ -93,18 +89,29 @@ lista_inteiros_para_string([Inteiro|Resto], String) :-
 
 convert('0', 0).
 convert('1', 1).
+decodificar([], _, _, []).
+decodificar([0 | Bits], [_, Item2 | _], Arvore, Decodifica) :- write(Item2), nl,
+	(is_leaf(Item2), append([Item2], Decodifica, Decode), 
+	decodificar(Bits, Arvore, Arvore, Decode);
+	decodificar(Bits, Item2, Arvore, Decodifica)).
 
+decodificar([1 | Bits], [_, Item2 | Item3], Arvore, Decodifica) :-
+	(is_empty(Item3), append([Item2], Decodifica, Decode),
+	decodificar(Bits, Arvore, Arvore, Decode);
+	decodificar(Bits, Item3, Arvore, Decodifica)).
 is_leaf([_, segundo | _]) :- is_list(segundo).
 is_empty([]).
 
-decodificar([], _, []).
-decodificar([0 | Bits], [_, Item2 | _], Decodifica) :-
-	(is_leaf(Item2), append([Item2], Decodifica, Decode), Decodifica = Decode;
-	decodificar(Bits, Item2, Decodifica)).
+decodificar([], _, _, []).
+decodificar([0 | Bits], [_, Item2 | _], Arvore, Decodifica) :- write(Item2), nl,
+	(is_leaf(Item2), append([Item2], Decodifica, Decode), 
+	decodificar(Bits, Arvore, Arvore, Decode);
+	decodificar(Bits, Item2, Arvore, Decodifica)).
 
-decodificar([1 | Bits], [_, Item2, Item3], Decodifica) :-
-	(is_empty(Item3), append([Item2], Decodifica, Decode), Decodifica = Decode;
-	decodificar(Bits, Item2, Decodifica)).
+decodificar([1 | Bits], [_, Item2 | Item3], Arvore, Decodifica) :-
+	(is_empty(Item3), append([Item2], Decodifica, Decode),
+	decodificar(Bits, Arvore, Arvore, Decode);
+	decodificar(Bits, Item3, Arvore, Decodifica)).
 
 
 	

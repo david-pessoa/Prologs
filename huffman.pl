@@ -3,10 +3,11 @@
 */
 
 :- use_module(library(pairs)).
+:- use_module(library(pio)).
 
 huffman :-
     %ler mensagem do in.txt
-	L = 'this is an example for huffman encoding',
+	read_file_to_string('in.txt', L, []),
 	atom_chars(L, LA),
 	msort(LA, LS),
 	packList(LS, PL),
@@ -16,11 +17,16 @@ huffman :-
 	sort(C, SC),
 	
 	% Substituir caracteres pelos códigos binários correspondentes
-    substituir_caracteres(LA, SC, MensagemCodificada),
+    substituir_caracteres(LA, SC, ListaMensagemCodificada),
 
-	write(MensagemCodificada). 
-
-	%escrever_mensagem_codificada("out.txt", MensagemCodificada).
+	concatenar_lista(ListaMensagemCodificada, MensagemCodificada),
+	escrever_em_arquivo(MensagemCodificada, 'out.txt'),
+	
+	atom_chars(MensagemCodificada, ListaBits),
+	%write(ListaBits),
+	decodificar(ListaBits, A, mensagemDecodificada),
+	write(mensagemDecodificada).
+	
 
 build_tree([[V1|R1], [V2|R2]|T], AF) :- 
 	V is V1 + V2, 
@@ -66,15 +72,17 @@ substituir_caracteres([Caractere|MensagemRestante], Codificacao, MensagemCodific
     ),
     substituir_caracteres(MensagemRestante, Codificacao, MensagemCodificadaRestanteRestante).
 
+concatenar_lista([], '').
+concatenar_lista([String|Resto], StringConcatenada) :-
+    concatenar_lista(Resto, RestoConcatenado),
+    string_concat(String, RestoConcatenado, StringConcatenada).
 
-escrever_mensagem_codificada(Arquivo, MensagemCodificada) :-
-    open(Arquivo, write, Stream),
-    maplist(escrever_codigo(Stream), MensagemCodificada),
+
+escrever_em_arquivo(String, NomeArquivo) :-
+    open(NomeArquivo, write, Stream, [encoding(utf8)]),
+    write(Stream, String),
     close(Stream).
 
-escrever_codigo(Stream, CodigoBinario) :-
-	%writeln(CodigoBinario),
-    maplist(write(Stream), CodigoBinario).
 
 lista_inteiros_para_string([], '').
 lista_inteiros_para_string([Inteiro|Resto], String) :-
@@ -86,4 +94,19 @@ lista_inteiros_para_string([Inteiro|Resto], String) :-
 convert('0', 0).
 convert('1', 1).
 
+is_leaf([_, segundo | _]) :- is_list(segundo).
+is_empty([]).
+
+decodificar([], _, []).
+decodificar([0 | Bits], [_, Item2 | _], Decodifica) :-
+	(is_leaf(Item2), append([Item2], Decodifica, Decode), Decodifica = Decode;
+	decodificar(Bits, Item2, Decodifica)).
+
+decodificar([1 | Bits], [_, Item2, Item3], Decodifica) :-
+	(is_empty(Item3), append([Item2], Decodifica, Decode), Decodifica = Decode;
+	decodificar(Bits, Item2, Decodifica)).
+
+
+	
+	
 

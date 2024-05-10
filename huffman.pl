@@ -1,7 +1,3 @@
-/* 1) descobrir como transferir o conteúdo de um arquivo para uma string em prolog
-   2) descobrir como transferir o conteúdo codificado produzido para o arquivo out.txt
-*/
-
 :- use_module(library(pairs)).
 :- use_module(library(pio)).
 
@@ -94,6 +90,11 @@ lista_inteiros_para_string([Inteiro|Resto], String) :-
 
 convert('0', 0).
 convert('1', 1).
+decodificar([], _, _, []).
+decodificar([0 | Bits], [_, Item2 | _], Arvore, Decodifica) :- write(Item2), nl,
+	(is_leaf(Item2), append([Item2], Decodifica, Decode), 
+	decodificar(Bits, Arvore, Arvore, Decode);
+	decodificar(Bits, Item2, Arvore, Decodifica)).
 
 
 is_empty([]).

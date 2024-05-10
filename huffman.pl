@@ -23,9 +23,10 @@ huffman :-
 	escrever_em_arquivo(MensagemCodificada, 'out.txt'),
 	
 	atom_chars(MensagemCodificada, ListaBits),
-	%write(ListaBits),
-	decodificar(ListaBits, A, mensagemDecodificada),
-	write(mensagemDecodificada).
+	write(ListaBits), nl,
+	%decodificar(ListaBits, A, A, mensagemDecodificada),
+	deko(ListaBits, ['1','n']). %['2',['1','g'],['1','n']]
+	%write(mensagemDecodificada).
 	
 
 build_tree([[V1|R1], [V2|R2]|T], AF) :- 
@@ -94,17 +95,27 @@ lista_inteiros_para_string([Inteiro|Resto], String) :-
 convert('0', 0).
 convert('1', 1).
 
-is_leaf([_, segundo | _]) :- is_list(segundo).
+
 is_empty([]).
 
-decodificar([], _, []).
-decodificar([0 | Bits], [_, Item2 | _], Decodifica) :-
-	(is_leaf(Item2), append([Item2], Decodifica, Decode), Decodifica = Decode;
-	decodificar(Bits, Item2, Decodifica)).
 
-decodificar([1 | Bits], [_, Item2, Item3], Decodifica) :-
-	(is_empty(Item3), append([Item2], Decodifica, Decode), Decodifica = Decode;
-	decodificar(Bits, Item2, Decodifica)).
+decodificar([], _, _, []).
+decodificar(['0' | Bits], [_, Item2 | Item3], Arvore, Decodifica) :-
+	(is_empty(Item3), append([Item2], Decodifica, Decode), Decodifica = Decode,
+	decodificar(Bits, Arvore, Arvore, Decodifica);
+	decodificar(Bits, Item2, Arvore Decodifica)).
+
+decodificar(['1' | Bits], [_, Item2 | Item3], Arvore, Decodifica) :-
+	(is_empty(Item3), append([Item2], Decodifica, Decode), Decodifica = Decode,
+	decodificar(Bits, Arvore, Arvore, Decodifica);
+	decodificar(Bits, Item3, Arvore, Decodifica)).
+
+
+deko([], []).
+deko(['1' | Bits], [_, Item2 | Item3]) :- is_empty(Item3), write([Item2]).
+	
+	
+
 
 
 	

@@ -21,7 +21,7 @@ huffman :-
 	atom_chars(MensagemCodificada, ListaBits),
 	write(ListaBits), nl,
 	%decodificar(ListaBits, A, A, mensagemDecodificada),
-	deko(ListaBits, ['1','n']). %['2',['1','g'],['1','n']]
+	deko(ListaBits, ['1','n'], A, [], mensagemDecodificada). %['2',['1','g'],['1','n']]
 	%write(mensagemDecodificada).
 	
 
@@ -90,27 +90,28 @@ lista_inteiros_para_string([Inteiro|Resto], String) :-
 
 convert('0', 0).
 convert('1', 1).
-decodificar([], _, _, []).
-decodificar([0 | Bits], [_, Item2 | _], Arvore, Decodifica) :- write(Item2), nl,
-	(is_leaf(Item2), append([Item2], Decodifica, Decode), 
-	decodificar(Bits, Arvore, Arvore, Decode);
-	decodificar(Bits, Item2, Arvore, Decodifica)).
-
-
 is_empty([]).
-
+init_decodifica([]).
 
 decodificar([], _, _, []).
 decodificar(['0' | Bits], [_, Item2 | Item3], Arvore, Decodifica) :-
 	(is_empty(Item3), append([Item2], Decodifica, Decode), Decodifica = Decode,
 	decodificar(Bits, Arvore, Arvore, Decodifica);
-	decodificar(Bits, Item2, Arvore Decodifica)).
+	decodificar(Bits, Item2, Arvore, Decodifica)).
 
-decodificar(['1' | Bits], [_, Item2 | Item3], Arvore, Decodifica) :-
-	(is_empty(Item3), append([Item2], Decodifica, Decode), Decodifica = Decode,
-	decodificar(Bits, Arvore, Arvore, Decodifica);
-	decodificar(Bits, Item3, Arvore, Decodifica)).
+decodificar(['1' | Bits], [_, Item2 | Item3], Arvore, Decodifica, Decode) :-
+	(is_empty(Item3), append([Item2], Decodifica, Decode),
+	decodificar(Bits, Arvore, Arvore, Decode);
+	decodificar(Bits, Item3, Arvore, Decode)).
 
 
-deko([], []).
-deko(['1' | Bits], [_, Item2 | Item3]) :- is_empty(Item3), write([Item2]).
+
+deko([], _, _, _, []).
+deko(_, [], _, _, []).
+deko(['1' | Bits], [_, Item2 | Item3], Arvore, Decodifica, Deco) :- 
+    (   is_empty(Item3) -> 
+        (   append([Item2], Decodifica, Deci),
+            deko(Bits, Arvore, Arvore, Deci, deca)
+        )
+    ;   write(Decodifica), deko(Bits, Item3, Arvore, Decodifica, Deco)
+    ).

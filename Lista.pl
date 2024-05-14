@@ -23,8 +23,10 @@ gera_m_mult(N, M, Lista) :- M1 is M - 1,
 
 %-------------------------- Exercício 6 -------------------------
 conta(_, [], 0).
-conta(N, [X | Lista], F) :- N =:= X, conta(N, Lista, F2), F is F2 + 1;
-    conta(N, Lista, F).
+conta(N, [X | Lista], F) :- N =:= X, conta(N, Lista, F2), F is F2 + 1.
+   
+
+conta(N, [X | Lista], F) :- N \= X, conta(N, Lista, F).
 
 find_max([], _, MaxF, MaxN, MaxN).
 find_max([X | Lista], L, MaxF, MaxN, R) :-
@@ -36,8 +38,19 @@ find_max([X | Lista], L, MaxF, MaxN, R) :-
     F =< MaxF,
     find_max(Lista, L, MaxF, MaxN, R).
 
-main :-
+menu :-
     Lista = [3, 3, 4, 3, 4, 8, 8, 8, 8, 8, 3, 3, 3],
     find_max(Lista, Lista, 0, 0, R),
-
+    write("Número com maior frequência na lista: "),
+    write(R).
 %------------------------ Exercício 7 -----------------------------
+mtam([], []).
+mtam([X | ListaA], [Y | ListaB]) :- mtam(ListaA, ListaB).
+
+%----------------------- Exercício 8 -------------------------------
+tri([], []).
+tri([X | Lista], [X, X, X | ListaTriplicada]) :- tri(Lista, ListaTriplicada).
+
+%------------------------ Exercício 9 -------------------------------
+
+

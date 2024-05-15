@@ -1,5 +1,9 @@
 % --------------------------- Exercício 1 ----------------------
-
+onde(_, [], _, -1).
+onde(Elem, [X | Lista], Count, Pos) :- 
+    Count2 is Count + 1,
+    (Elem =:= X, Pos is Count2;
+    onde(Elem, Lista, Count2, Pos1), Pos is Pos1).
 
 % --------------------------- Exercício 2 ----------------------
 ateh(E, [E | L], [E]).
@@ -52,18 +56,33 @@ tri([], []).
 tri([X | Lista], [X, X, X | ListaTriplicada]) :- tri(Lista, ListaTriplicada).
 
 %------------------------ Exercício 9 -------------------------------
-node(No, Pai, FilhoEsq, FilhoDir). %Nó qualquer
-node(No, [], [], []). %árvore de um nó
-node(No, [], FilhoEsq, FilhoDir). %primeiro nó 
-node(No, Pai, FilhoEsq, []). %nó com pai e filho FilhoEsq
-node(No, Pai, [], FilhoDir). %nó com pai e filho FilhoDir
-
-folha(No, Pai, [], []). %nó folha
-
+subs(_, _, nil, nil). %encontra nó folha
 
 subs(A, B, tree(NO, ND, NE), tree(NR, NDR1, NER1)) :- 
-    NO =:= A, subs(A, B, tree(B, ND, NE), tree(B, NDR1, NER1));
-    NO \= A, subs(A, B, tree(NO, ND, NE), tree(NO, NDR1, NER1)).
+    ( NO =:= A -> NR = B ; NR = NO ),
+    subs(A, B, ND, NDR1), 
+    subs(A, B, NE, NER1).
 
+try :- 
+    Tree = tree(1, tree(2, nil, nil), tree(3, nil, nil)),
+    subs(3, 2, Tree, Result), %substitui 3 por 2 na árvore
+    writeln(Result).
 
-%subs(3, 2, tree(1, 2, 3), tree(NO, NDR1, NER1)).
+%----------------------- Exercício 10 --------------------------------
+pre(nil, []). %pré-ordem, retorna lista com o percurso feito
+pre(tree(NO, FE, FD), Lista) :-
+    pre(FE, ListaFE), pre(FD, ListaFD), append([NO], ListaFE, ListaTemp), append(ListaTemp, ListaFD, Lista).
+
+pos(nil, []). %pós-ordem, retorna lista com o percurso feito
+pos(tree(NO, FE, FD), Lista) :-
+    pos(FE, ListaFE), pos(FD, ListaFD), append(ListaFE, ListaFD, ListaTemp), append(ListaTemp, [NO], Lista).
+
+confere([], []). %confere se os percursos são iguais
+confere([X | Pre], [Y | Pos]) :- X =:= Y, confere(Pre, Pos).
+
+exec10 :- 
+    T1 = tree(1, tree(2, nil, nil), tree(3, nil, nil)),
+    T2 = tree(3, tree(1, nil, nil), tree(2, nil, nil)),
+    pre(T1, R1), 
+    pos(T2, R2),
+    confere(R1, R2).

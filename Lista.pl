@@ -52,5 +52,18 @@ tri([], []).
 tri([X | Lista], [X, X, X | ListaTriplicada]) :- tri(Lista, ListaTriplicada).
 
 %------------------------ Exercício 9 -------------------------------
+node(No, Pai, FilhoEsq, FilhoDir). %Nó qualquer
+node(No, [], [], []). %árvore de um nó
+node(No, [], FilhoEsq, FilhoDir). %primeiro nó 
+node(No, Pai, FilhoEsq, []). %nó com pai e filho FilhoEsq
+node(No, Pai, [], FilhoDir). %nó com pai e filho FilhoDir
+
+folha(No, Pai, [], []). %nó folha
 
 
+subs(A, B, tree(NO, ND, NE), tree(NR, NDR1, NER1)) :- 
+    NO =:= A, subs(A, B, tree(B, ND, NE), tree(B, NDR1, NER1));
+    NO \= A, subs(A, B, tree(NO, ND, NE), tree(NO, NDR1, NER1)).
+
+
+%subs(3, 2, tree(1, 2, 3), tree(NO, NDR1, NER1)).

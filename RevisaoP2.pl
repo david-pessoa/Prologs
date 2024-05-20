@@ -21,7 +21,12 @@ trocaH(no(_, Te, Td), no(H, Te2, Td2)) :-
         
 /******************** Troca valor por numero de ocorrencia *************/
 trocaQtd(Tree1, Tree2) :- trocaQ(Tree1, Tree1, Tree2).
-trocaQ(f(Val), Tree, f(Qtd)) :- qtde(Val, Tree, N).
+trocaQtd(f(Val), Tree, f(N)) :- qtde(Val, Tree, N).
+trocaQtd(no(Val, Te, Td), Tree, no(N, Te2, Td2)) :-
+        qtde(Val, Tree, N),
+        trocaQtd(Te, Tree, Te2),
+        trocaQtd(Td, Tree, Td2).
+
 
 qtde(Val, Tree, N).
 qtde(Val, f(Val), 1).

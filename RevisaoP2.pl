@@ -18,3 +18,10 @@ trocaH(no(_, Te, Td), no(H, Te2, Td2)) :-
         h(no(_, Te, Td), H),
         trocaH(Te, Te2),
         trocaH(Td, Td2).
+        
+/******************** Troca valor por numero de ocorrencia *************/
+qtde(Val, Tree, N).
+qtde(Val, f(Val), 1).
+qtde(V1, f(V2), 0) :- V1 \= V2.
+qtde(Val, no(Val, Te, Td), N) :- qtde(Val, Te, Ne), qtde(Val, Td, Nd), N is 1 + Ne + Nd.
+qtde(V1, no(V2, Te, Td), N) :- qtde(Val, Te, Ne), qtde(Val, Td, Nd), N is Ne + Nd.

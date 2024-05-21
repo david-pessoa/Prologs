@@ -19,10 +19,7 @@ huffman :-
     escrever_em_arquivo(MensagemCodificada, 'out.txt'),
 
     atom_chars(MensagemCodificada, ListaBits),
-    write(ListaBits), nl,
-    %decodificar(ListaBits, A, A, mensagemDecodificada),
-    deko(ListaBits, A, A, [], mensagemDecodificada). %['2',['1','g'],['1','n']]
-    %write(mensagemDecodificada).
+    decodificar(ListaBits, A, A, []).
 
 
 build_tree([[V1|R1], [V2|R2]|T], AF) :- 
@@ -90,40 +87,19 @@ lista_inteiros_para_string([Inteiro|Resto], String) :-
 
 convert('0', 0).
 convert('1', 1).
-is_empty([]).
-init_decodifica([]).
 
-decodificar([], _, _, []).
-decodificar(['0' | Bits], [_, Item2 | Item3], Arvore, Decodifica) :-
-    (is_empty(Item3), append([Item2], Decodifica, Decode), Decodifica = Decode,
-    decodificar(Bits, Arvore, Arvore, Decodifica);
-    decodificar(Bits, Item2, Arvore, Decodifica)).
+decodificar([], [_, Char], _, Decodifica) :- 
+    append(Decodifica, [Char], Deci), 
+	concatenar_lista(Deci, MensagemDecodificada),
+	writeln("Mensagem decodificada:"),
+	writeln(MensagemDecodificada).
 
-decodificar(['1' | Bits], [_, Item2 | Item3], Arvore, Decodifica, Decode) :-
-    (is_empty(Item3), append([Item2], Decodifica, Decode),
-    decodificar(Bits, Arvore, Arvore, Decode);
-    decodificar(Bits, Item3, Arvore, Decode)).
+decodificar(['1' | Bits], [_, Item2, Item3 | X], Arvore, Decodifica) :- 
+	decodificar(Bits, Item3, Arvore, Decodifica).
 
+decodificar(['0' | Bits], [_, Item2, Item3 | X], Arvore, Decodifica) :- 
+    decodificar(Bits, Item2, Arvore, Decodifica).
 
-
-deko([], _, _, _, []).
-deko(_, [], _, _, []).
-deko(['1' | Bits], [_, Item2 | Item3], Arvore, Decodifica, Deco) :- writeln(Item3),
-    is_empty(Bits) ->
-        (Deco is Decodifica);
-    (   is_empty(Item3) -> 
-        (   append([Item2], Decodifica, Deci),
-            deko(Bits, Arvore, Arvore, Deci, Deco)
-        )
-    ; writeln("oi"), deko(Bits, Item3, Arvore, Decodifica, Deco)
-    ).
-
-deko(['0' | Bits], [_, Item2 | Item3], Arvore, Decodifica, Deco) :- writeln(Item3),
-is_empty(Bits) ->
-    (Deco is Decodifica);
-(   is_empty(Item3) -> 
-    (   append([Item2], Decodifica, Deci),
-        deko(Bits, Arvore, Arvore, Deci, Deco)
-    )
-; writeln("oi"), deko(Bits, Item3, Arvore, Decodifica, Deco)
-).
+decodificar(Bits, [_, Char], Arvore, Decodifica) :- 
+    append(Decodifica, [Char], Deci),
+    decodificar(Bits, Arvore, Arvore, Deci).

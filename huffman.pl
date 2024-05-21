@@ -3,50 +3,50 @@
 
 huffman :-
     %ler mensagem do in.txt
-	read_file_to_string('in.txt', L, []),
-	atom_chars(L, LA),
-	msort(LA, LS),
-	packList(LS, PL),
-	sort(PL, PLS),
-	build_tree(PLS, A),
-	coding(A, [], C),
-	sort(C, SC),
-	
-	% Substituir caracteres pelos códigos binários correspondentes
+    read_file_to_string('in.txt', L, []),
+    atom_chars(L, LA),
+    msort(LA, LS),
+    packList(LS, PL),
+    sort(PL, PLS),
+    build_tree(PLS, A),
+    coding(A, [], C),
+    sort(C, SC),
+
+    % Substituir caracteres pelos códigos binários correspondentes
     substituir_caracteres(LA, SC, ListaMensagemCodificada),
 
-	concatenar_lista(ListaMensagemCodificada, MensagemCodificada),
-	escrever_em_arquivo(MensagemCodificada, 'out.txt'),
-	
-	atom_chars(MensagemCodificada, ListaBits),
-	write(ListaBits), nl,
-	%decodificar(ListaBits, A, A, mensagemDecodificada),
-	deko(ListaBits, ['1','n'], A, [], mensagemDecodificada). %['2',['1','g'],['1','n']]
-	%write(mensagemDecodificada).
-	
+    concatenar_lista(ListaMensagemCodificada, MensagemCodificada),
+    escrever_em_arquivo(MensagemCodificada, 'out.txt'),
+
+    atom_chars(MensagemCodificada, ListaBits),
+    write(ListaBits), nl,
+    %decodificar(ListaBits, A, A, mensagemDecodificada),
+    deko(ListaBits, A, A, [], mensagemDecodificada). %['2',['1','g'],['1','n']]
+    %write(mensagemDecodificada).
+
 
 build_tree([[V1|R1], [V2|R2]|T], AF) :- 
-	V is V1 + V2, 
-	A = [V, [V1|R1], [V2|R2]],
-	(   T=[] -> AF=A ;  sort([A|T], NT), build_tree(NT, AF) ).
+    V is V1 + V2, 
+    A = [V, [V1|R1], [V2|R2]],
+    (   T=[] -> AF=A ;  sort([A|T], NT), build_tree(NT, AF) ).
 
 coding([_A,FG,FD], Code, CF) :-
-	(   is_node(FG) ->  coding(FG, [0 | Code], C1)
-			 ;  leaf_coding(FG, [0 | Code], C1) ),
-	(   is_node(FD) ->  coding(FD, [1 | Code], C2)
-			 ;  leaf_coding(FD, [1 | Code], C2) ),
-	append(C1, C2, CF).
+    (   is_node(FG) ->  coding(FG, [0 | Code], C1)
+             ;  leaf_coding(FG, [0 | Code], C1) ),
+    (   is_node(FD) ->  coding(FD, [1 | Code], C2)
+             ;  leaf_coding(FD, [1 | Code], C2) ),
+    append(C1, C2, CF).
 
 leaf_coding([FG,FD], Code, CF) :-
-	reverse(Code, CodeR),
-	CF = [[FG, FD, CodeR]] .
+    reverse(Code, CodeR),
+    CF = [[FG, FD, CodeR]] .
 
 is_node([_V, _FG, _FD]).
 
 print_code([N, Car, Code]):-
-	format('~w :~t~w~t~30|', [Car, N]),
-	forall(member(V, Code), write(V)),
-	nl.
+    format('~w :~t~w~t~30|', [Car, N]),
+    forall(member(V, Code), write(V)),
+    nl.
 
 packList([], []).
 packList([X], [[1,X]]) :- !.
@@ -64,7 +64,7 @@ run(V, [Other|RRest], [1,V], [Other|RRest]):-
 substituir_caracteres([], _, []).
 substituir_caracteres([Caractere|MensagemRestante], Codificacao, MensagemCodificadaRestante) :-
     (   member([_, Caractere, CodigoBinario | X], Codificacao) ->
-		lista_inteiros_para_string(CodigoBinario, Code_str),
+        lista_inteiros_para_string(CodigoBinario, Code_str),
         MensagemCodificadaRestante = [Code_str|MensagemCodificadaRestanteRestante]
     ),
     substituir_caracteres(MensagemRestante, Codificacao, MensagemCodificadaRestanteRestante).
@@ -95,23 +95,35 @@ init_decodifica([]).
 
 decodificar([], _, _, []).
 decodificar(['0' | Bits], [_, Item2 | Item3], Arvore, Decodifica) :-
-	(is_empty(Item3), append([Item2], Decodifica, Decode), Decodifica = Decode,
-	decodificar(Bits, Arvore, Arvore, Decodifica);
-	decodificar(Bits, Item2, Arvore, Decodifica)).
+    (is_empty(Item3), append([Item2], Decodifica, Decode), Decodifica = Decode,
+    decodificar(Bits, Arvore, Arvore, Decodifica);
+    decodificar(Bits, Item2, Arvore, Decodifica)).
 
 decodificar(['1' | Bits], [_, Item2 | Item3], Arvore, Decodifica, Decode) :-
-	(is_empty(Item3), append([Item2], Decodifica, Decode),
-	decodificar(Bits, Arvore, Arvore, Decode);
-	decodificar(Bits, Item3, Arvore, Decode)).
+    (is_empty(Item3), append([Item2], Decodifica, Decode),
+    decodificar(Bits, Arvore, Arvore, Decode);
+    decodificar(Bits, Item3, Arvore, Decode)).
 
 
 
 deko([], _, _, _, []).
 deko(_, [], _, _, []).
-deko(['1' | Bits], [_, Item2 | Item3], Arvore, Decodifica, Deco) :- 
+deko(['1' | Bits], [_, Item2 | Item3], Arvore, Decodifica, Deco) :- writeln(Item3),
+    is_empty(Bits) ->
+        (Deco is Decodifica);
     (   is_empty(Item3) -> 
         (   append([Item2], Decodifica, Deci),
-            deko(Bits, Arvore, Arvore, Deci, deca)
+            deko(Bits, Arvore, Arvore, Deci, Deco)
         )
-    ;   write(Decodifica), deko(Bits, Item3, Arvore, Decodifica, Deco)
+    ; writeln("oi"), deko(Bits, Item3, Arvore, Decodifica, Deco)
     ).
+
+deko(['0' | Bits], [_, Item2 | Item3], Arvore, Decodifica, Deco) :- writeln(Item3),
+is_empty(Bits) ->
+    (Deco is Decodifica);
+(   is_empty(Item3) -> 
+    (   append([Item2], Decodifica, Deci),
+        deko(Bits, Arvore, Arvore, Deci, Deco)
+    )
+; writeln("oi"), deko(Bits, Item3, Arvore, Decodifica, Deco)
+).

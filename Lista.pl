@@ -5,15 +5,35 @@ onde(Elem, [X | Lista], Count, Pos) :-
     (Elem =:= X, Pos is Count2;
     onde(Elem, Lista, Count2, Pos1), Pos is Pos1).
 
+/*
+Versão do professor:
+onde(E, L, Pos) :- onde(E, L, 1, Pos).
+
+onde(E, [E | _ ], N, N).
+onde(E, [A | As], N, Pos) :- N2 is N + 1, onde(E, As, N2, Pos).
+*/
+
 % --------------------------- Exercício 2 ----------------------
 ateh(E, [E | L], [E]).
 ateh(E, [], []).
 ateh(E, [X | L], R) :- ateh(E, L, R1), R = [X | R1].
 
+/*
+Versão do professor:
+ateh(E, [E | _ ], [E]).
+ateh(E, [A | As], [A | X]) :- ateh(E, As, X).
+*/
+
 %--------------------------- Exercício 3 -----------------------
 apos(E, [], []).
 apos(E, [E | L], L).
 apos(E, [X | L], R) :- apos(E, L, R1), R = R1.
+
+/*
+Versão do professor:
+apos(E, [E | L], L).
+apos(E, [X | L], R) :- apos(E, L, R).
+*/
 
 %--------------------------- Exercício 4 -----------------------
 npri(0, []).
@@ -31,6 +51,12 @@ conta(N, [X | Lista], F) :- N =:= X, conta(N, Lista, F2), F is F2 + 1.
    
 
 conta(N, [X | Lista], F) :- N \= X, conta(N, Lista, F).
+
+/*
+Versão do professor:
+conta(N, [N | Lista], F) :- conta(N, Lista, F2), F is F2 + 1.
+conta(N, [_ | Lista], F) :- conta(N, Lista, F).
+*/
 
 find_max([], _, MaxF, MaxN, MaxN).
 find_max([X | Lista], L, MaxF, MaxN, R) :-
